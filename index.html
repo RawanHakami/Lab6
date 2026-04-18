@@ -48,13 +48,30 @@ button:hover {
   background: #333;
 }
 
+/* التعليقات بشكل أجمل */
+#commentsList {
+  width: 60%;
+  margin: 20px auto;
+  text-align: left;
+}
+
+#commentsList li {
+  background: white;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-left: 5px solid #007bff;
+  font-size: 15px;
+}
+
 </style>
 </head>
 
 <body>
 
 <h1>Lab 6</h1>
-<h2>Like or dislike</h2>
+<h2>Like or Dislike</h2>
 
 <div class="box" onclick="vote('like')">
 👍 <span id="likeCount">0</span>
@@ -78,7 +95,7 @@ let likes = 0;
 let dislikes = 0;
 let comments = [];
 
-// ================= COOKIES =================
+// ================= Cookies =================
 function setCookie(name, value) {
   document.cookie = name + "=" + encodeURIComponent(value) + ";path=/";
 }
@@ -96,7 +113,7 @@ function deleteCookie(name) {
   document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 }
 
-// ================= LOAD DATA =================
+// ================= Load Data =================
 function loadData() {
   likes = parseInt(getCookie("likes")) || 0;
   dislikes = parseInt(getCookie("dislikes")) || 0;
@@ -108,7 +125,7 @@ function loadData() {
   showComments();
 }
 
-// ================= VOTE =================
+// ================= Voting =================
 function vote(type) {
   if (getCookie("voted")) {
     alert("You already voted!");
@@ -127,7 +144,7 @@ function vote(type) {
   loadData();
 }
 
-// ================= COMMENTS =================
+// ================= Comments =================
 function addComment() {
   let text = document.getElementById("comment").value;
 
@@ -155,12 +172,17 @@ function showComments() {
 
   comments.forEach(c => {
     let li = document.createElement("li");
-    li.innerText = c;
+
+    li.innerHTML = `
+      <strong>👤 User:</strong><br>
+      ${c}
+    `;
+
     list.appendChild(li);
   });
 }
 
-// ================= RESET =================
+// ================= Reset =================
 function clearAll() {
   deleteCookie("likes");
   deleteCookie("dislikes");
