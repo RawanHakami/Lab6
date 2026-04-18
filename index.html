@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lab 6 - Like or Dislike</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f5f5f5;
+}
+
+h1 {
+  margin-top: 40px;
+}
+
+.box {
+  display: inline-block;
+  background: #ddd;
+  padding: 25px 50px;
+  margin: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 40px;
+}
+
+textarea {
+  width: 60%;
+  height: 120px;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+button {
+  margin: 10px;
+  padding: 10px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  background: #555;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #333;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Lab 6</h1>
+<h2>Like or dislike</h2>
+
+<div class="box" onclick="vote('like')">
+👍 <span id="likeCount">0</span>
+</div>
+
+<div class="box" onclick="vote('dislike')">
+👎 <span id="dislikeCount">0</span>
+</div>
+
+<h2>Comments</h2>
+
+<textarea id="comment" placeholder="Write a comment..."></textarea><br>
+
+<button onclick="addComment()">Submit</button>
+<button onclick="clearAll()">Clear</button>
+
+<ul id="commentsList"></ul>
+
+<script>
+let likes = 0;
+let dislikes = 0;
+let comments = [];
+
+// ================= COOKIES =================
+function setCookie(name, value) {
+  document.cookie = name + "=" + encodeURIComponent(value) + ";path=/";
+}
+
+function getCookie(name) {
+  let cookies = document.cookie.split(";");
+  for (let c of cookies) {
+    let [key, val] = c.trim().split("=");
+    if (key === name) return decodeURIComponent(val);
+  }
+  return "";
+}
+
+function deleteCookie(name) {
+  document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
+
+// ================= LOAD DATA =================
+function loadData() {
+  likes = parseInt(getCookie("likes")) || 0;
+  dislikes = parseInt(getCookie("dislikes")) || 0;
+  comments = JSON.parse(getCookie("comments") || "[]");
+
+  document.getElementById("likeCount").innerText = likes;
+  document.getElementById("dislikeCount").innerText = dislikes;
+
+  showComments();
+}
+
+// ================= VOTE =================
+function vote(type) {
+  if (getCookie("voted")) {
+    alert("You already voted!");
+    return;
+  }
+
+  if (type === "like") {
+    likes++;
+    setCookie("likes", likes);
+  } else {
+    dislikes++;
+    setCookie("dislikes", dislikes);
+  }
+
+  setCookie("voted", "yes");
+  loadData();
+}
+
+// ================= COMMENTS =================
+function addComment() {
+  let text = document.getElementById("comment").value;
+
+  if (getCookie("commented")) {
+    alert("You already commented!");
+    return;
+  }
+
+  if (text.trim() === "") {
+    alert("Write something!");
+    return;
+  }
+
+  comments.push(text);
+  setCookie("comments", JSON.stringify(comments));
+  setCookie("commented", "yes");
+
+  document.getElementById("comment").value = "";
+  showComments();
+}
+
+function showComments() {
+  let list = document.getElementById("commentsList");
+  list.innerHTML = "";
+
+  comments.forEach(c => {
+    let li = document.createElement("li");
+    li.innerText = c;
+    list.appendChild(li);
+  });
+}
+
+// ================= RESET =================
+function clearAll() {
+  deleteCookie("likes");
+  deleteCookie("dislikes");
+  deleteCookie("comments");
+  deleteCookie("voted");
+  deleteCookie("commented");
+
+  likes = 0;
+  dislikes = 0;
+  comments = [];
+
+  loadData();
+}
+
+window.onload = loadData;
+</script>
+
+</body>
+</html>
